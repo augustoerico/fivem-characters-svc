@@ -1,0 +1,13 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+master = {editable = true, git = "ssh://git@github.com/augustoerico/aws-api-gw-middleware_py36.git"}
+simplejson = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"

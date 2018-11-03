@@ -1,0 +1,104 @@
+service: character-svc
+frameworkVersion: ">=1.13.2 <2.0.0"
+
+plugins:
+- serverless-prune-plugin
+- serverless-python-requirements
+
+package:
+    exclude:
+    - docs/**
+    - node_modules/**
+    - tests/**
+    - migration/**
+    - venv/**
+
+provider:
+    name: aws
+    runtime: python3.6
+    stage: ${opt:stage, "dev"}
+    region: us-east-1
+
+    memorySize: 768
+
+    apiGateway:
+        restApiId: ''
+        restApiRootResourceId: ''
+
+    # Builds arn:aws:iam::<account>:role/<service>-<stage>-<region>-lambdaRole
+#    iamRoleStatements:
+
+functions:
+
+    http-get:
+        handler: handlers/http/get.handle
+        events:
+        -   http:
+                cors: true
+                authorizer:
+                    name: ${self:service}-authorizer
+                    arn: "arn:aws:lambda:us-west-2:573944535954:function:sandbox-authorize"
+                    identitySource: method.request.header.Authorization
+                    type: request
+                path: /characters/{id}
+                method: get
+
+    http-list:
+        handler: handlers/http/list.handle
+        events:
+        -   http:
+                cors: true
+                authorizer:
+                    name: ${self:service}-authorizer
+                    arn: "arn:aws:lambda:us-west-2:573944535954:function:sandbox-authorize"
+                    identitySource: method.request.header.Authorization
+                    type: request
+                path: /characters
+                method: get
+
+    http-delete:
+        handler: handlers/http/delete.handle
+        events:
+        -   http:
+                cors: true
+                authorizer:
+                    name: ${self:service}-authorizer
+                    arn: "arn:aws:lambda:us-west-2:573944535954:function:sandbox-authorize"
+                    identitySource: method.request.header.Authorization
+                    type: request
+                path: /characters/{id}
+                method: delete
+
+    http-create:
+        handler: handlers/http/create.handle
+        events:
+        -   http:
+                cors: true
+                authorizer:
+                    name: ${self:service}-authorizer
+                    arn: "arn:aws:lambda:us-west-2:573944535954:function:sandbox-authorize"
+                    identitySource: method.request.header.Authorization
+                    type: request
+                path: /characters
+                method: post
+
+    http-update:
+        handler: handlers/http/update.handle
+        events:
+        -   http:
+                cors: true
+                authorizer:
+                    name: ${self:service}-authorizer
+                    arn: "arn:aws:lambda:us-west-2:573944535954:function:sandbox-authorize"
+                    identitySource: method.request.header.Authorization
+                    type: request
+                path: /characters/{id}
+                method: post
+
+custom:
+    prune:
+        automatic: true
+        number: 5
+    pythonRequirements:
+        dockerizePip: non-linux
+        dockerSsh: true
